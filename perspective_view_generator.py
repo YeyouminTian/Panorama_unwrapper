@@ -76,10 +76,15 @@ def generate_perspective_views(input_path, output_dir, fov_h=100, fov_v=55, out_
     back_view = equirectangular_to_perspective(equirectangular, fov_h, fov_v, -90, 0, out_size)
     front_view = equirectangular_to_perspective(equirectangular, fov_h, fov_v, 90, 0, out_size)
     
-    # 保存各个视图
+    # 保存各个视图到对应的子文件夹
     for view, name in [(left_view, 'left'), (right_view, 'right'), (front_view, 'front'), (back_view, 'back')]:
         if view is not None and view.size > 0 and view.max() > 0:  # 确保图像不是全黑的
-            output_path = os.path.join(output_dir, f'{base_name}_{name}_view.jpg')
+            # 创建对应的子文件夹
+            sub_dir = os.path.join(output_dir, name)
+            if not os.path.exists(sub_dir):
+                os.makedirs(sub_dir)
+            
+            output_path = os.path.join(sub_dir, f'{base_name}_{name}_view.jpg')
             cv2.imwrite(output_path, view)
             print(f"已保存{name}视图: {output_path}")
         else:
